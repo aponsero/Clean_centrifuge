@@ -1,7 +1,11 @@
 export CWD=$PWD
 # where programs are
 export BIN_DIR="/rsgrps/bhurwitz/hurwitzlab/bin"
-
+# Job set up informations
+export FASTA=""
+export TYPE="" #choose viral or bacterial
+export OUTDIR=""
+export OUTNAME=""
 # User informations
 export QUEUE="standard"
 export GROUP="bhurwitz"

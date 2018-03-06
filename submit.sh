@@ -6,10 +6,26 @@ set -u
 
 source scripts/config.sh
 
-if [[ ! -d "$RESULT_DIR" ]]; then
-    echo "$RESULT_DIR does not exist. Run ./split.sh to create the directory and the split files."
+if [[ ! -f "$FASTA" ]]; then
+    echo "$FASTA does not exist. Please submit a Fasta file to clean. Job terminated."
     exit 1
 fi
+
+if [[ ! -d "$OUTDIR" ]]; then
+    echo "$OUTNAME not provided. Please correct specified parameter in config file. Job terminated."
+    exit 1
+fi
+
+if [[ ${#TYPE} -lt 1 ]]; then
+  echo "Incorrect training set type value. Please correct specified parameter in config file. Job terminated."
+  exit 1
+fi
+
+if [[ ! -d "$OUTDIR" ]]; then
+    echo "$OUTDIR does not exist. The directory was created."
+    mkdir $OUTDIR
+fi
+
 
 #
 # Job submission
@@ -22,7 +38,7 @@ ARGS="-q $QUEUE -W group_list=$GROUP -M $MAIL_USER -m $MAIL_TYPE"
 ## 02- run kmerFrequency calculation
 #
 
-PROG1=""
+PROG1="run_centrifuge"
 
 export STDERR_DIR1="$SCRIPT_DIR/err/$PROG1"
 export STDOUT_DIR1="$SCRIPT_DIR/out/$PROG1"
@@ -30,7 +46,10 @@ export STDOUT_DIR1="$SCRIPT_DIR/out/$PROG1"
 init_dir "$STDERR_DIR1" "$STDOUT_DIR1"
 
 if [ "$TYPE" == "viral" ]; then
-        export READTYPE=1
+        export EXCLUDE="10239"
+elif [ "$TYPE" == "bacterial" ]; then
+        export EXCLUDE="2,2157,2759"
 else
-        export READTYPE=0
+    echo "the type of data provided is not correct. Please correct the type parameter in config file. Job terminated."
+    exit 1
 fi
